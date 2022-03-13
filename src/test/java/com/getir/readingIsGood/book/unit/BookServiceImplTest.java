@@ -27,108 +27,90 @@ class BookServiceImplTest {
     private BookRepository bookRepository;
     private ModelMapper modelMapper;
 
+    Book book;
+    BookDto bookDto;
+    ResponseBookDto responseBookDto;
+
     @BeforeEach
     public void setUp(){
          bookRepository = mock(BookRepository.class);
          modelMapper = new ModelMapper();
          bookService = new BookServiceImpl(bookRepository, modelMapper);
+         book = new Book("id","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
+         bookDto = new BookDto("Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
+         responseBookDto = new ResponseBookDto(null,"Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
     }
 
     @Test
     void testAddNewBook_whenBookIsNotExists_shouldReturnBook() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(bookdto, ResponseBookDto.class);
         //When
-        Mockito.when(bookRepository.findByName(book.getName())).thenReturn(Optional.empty());
+        Mockito.when(bookRepository.findByName(bookDto.getName())).thenReturn(Optional.empty());
         Mockito.when(bookRepository.save(book)).thenReturn(book);
         //then
-        assertEquals(responseBookDto, bookService.addNewBook(bookdto));
-        Mockito.verify(bookRepository).findByName(book.getName());
-        //Mockito.verify(bookRepository).save(book);
+        assertEquals(responseBookDto, bookService.addNewBook(bookDto));
+        Mockito.verify(bookRepository).findByName(bookDto.getName());
     }
 
     @Test
     void testAddNewBook_whenBookIsAlreadyExists_shouldThrowBookAlreadyExistsException() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
         //when
-        Mockito.when(bookRepository.findByName(book.getName())).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.findByName(bookDto.getName())).thenReturn(Optional.of(book));
         //then
-        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.addNewBook(bookdto));
+        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.addNewBook(bookDto));
         assertEquals(ExceptionCode.BOOK_ALREADY_EXIST, exception.getExceptionCode());
         Mockito.verify(bookRepository).findByName(book.getName());
     }
 
     @Test
     void testUpdateBookStock_whenBookIsExistsAndSetStockNumberBiggerThanZero_shouldReturnBook() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", 10, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(bookdto, ResponseBookDto.class);
         //when
         Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         Mockito.when(bookRepository.save(book)).thenReturn(book);
         //then
-        assertEquals(responseBookDto.getStock(), bookService.updateBookStock(book.getId(), bookdto).getStock());
+        assertEquals(responseBookDto.getStock(), bookService.updateBookStock(book.getId(), bookDto).getStock());
         Mockito.verify(bookRepository).findById(book.getId());
     }
 
     @Test
     void testUpdateBookStock_whenBookIsExistsAndSetStockNumberLessThanZero_shouldReturnBook() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", 10, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(bookdto, ResponseBookDto.class);
-        //when
+          //when
         Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         Mockito.when(bookRepository.save(book)).thenReturn(book);
         //then
-        assertEquals(responseBookDto.getStock(), bookService.updateBookStock(book.getId(), bookdto).getStock());
+        assertEquals(responseBookDto.getStock(), bookService.updateBookStock(book.getId(), bookDto).getStock());
         Mockito.verify(bookRepository).findById(book.getId());
     }
 
     @Test
     void testUpdateBookStock_whenBookIsNotExists_shouldThrowStockMustBeGreaterThanZeroException() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", -4, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(bookdto, ResponseBookDto.class);
+        bookDto.setStock(-4);
         //when
         Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         //then
-        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.updateBookStock(book.getId(), bookdto));
+        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.updateBookStock(book.getId(), bookDto));
         assertEquals(ExceptionCode.STOCK_MUST_BE_GREATER_THAN_ZERO, exception.getExceptionCode());
         Mockito.verify(bookRepository).findById(book.getId());
+        bookDto.setStock(3);
+
     }
 
     @Test
     void testGetBookInfoByName_whenBookIsExists_shouldReturnBook() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltından Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltından Notlar", "Dostoyevski", -4, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(book, ResponseBookDto.class);
         //when
-        Mockito.when(bookRepository.findByName(book.getName())).thenReturn(Optional.of(book));
-
+        Mockito.when(bookRepository.findByName(bookDto.getName())).thenReturn(Optional.of(book));
+        responseBookDto.setId("id");
         //then
-        assertEquals(responseBookDto, bookService.getBookInfoByName(bookdto.getName()));
+        assertEquals(responseBookDto, bookService.getBookInfoByName(bookDto.getName()));
         Mockito.verify(bookRepository).findByName(book.getName());
     }
 
     @Test
     void testGetBookInfoByName_whenBookIsNotExists_shouldThrowBookNotFoundException() {
-        //given
-        Book book = new Book("ssfasfkamdk","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        BookDto bookdto = new BookDto("Yeraltindan Notlar", "Dostoyevski", -4, BigDecimal.valueOf(10.0),"description");
-        ResponseBookDto responseBookDto = modelMapper.map(book, ResponseBookDto.class);
         //when
-        Mockito.when(bookRepository.findByName(book.getName())).thenReturn(Optional.empty());
+        Mockito.when(bookRepository.findByName(bookDto.getName())).thenReturn(Optional.empty());
 
         //then
-        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.getBookInfoByName(bookdto.getName()));
+        ReadingIsGoodException exception = assertThrows(ReadingIsGoodException.class, () -> bookService.getBookInfoByName(bookDto.getName()));
         assertEquals(ExceptionCode.BOOK_NOT_FOUND, exception.getExceptionCode());
         Mockito.verify(bookRepository).findByName(book.getName());
     }

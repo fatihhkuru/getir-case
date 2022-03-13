@@ -1,14 +1,12 @@
-package com.getir.readingIsGood.book.Integration.repository;
+package com.getir.readingIsGood.book.integration.repository;
 
 import com.getir.readingIsGood.book.dto.BookDto;
 import com.getir.readingIsGood.book.dto.ResponseBookDto;
 import com.getir.readingIsGood.book.model.Book;
 import com.getir.readingIsGood.book.repository.BookRepository;
-import com.getir.readingIsGood.book.service.BookServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -6,6 +6,7 @@ import com.getir.readingIsGood.book.model.Book;
 import com.getir.readingIsGood.book.service.BookService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,12 +18,14 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/addNewBook")
     public ResponseEntity<ResponseBookDto> addNewBook(@Valid @RequestBody BookDto bookDto){
         ResponseBookDto responseBookDto= bookService.addNewBook(bookDto);
         return ResponseEntity.ok(responseBookDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/updateStock/{id}")
     public ResponseEntity<ResponseBookDto> updateBookStock(@PathVariable("id") String id, @RequestBody BookDto bookDto){
         ResponseBookDto responseBookDto= bookService.updateBookStock(id, bookDto);

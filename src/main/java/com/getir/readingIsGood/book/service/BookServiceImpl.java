@@ -8,6 +8,8 @@ import com.getir.readingIsGood.common.exception.ExceptionCode;
 import com.getir.readingIsGood.common.exception.ReadingIsGoodException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,10 @@ public class BookServiceImpl implements BookService{
 
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
+    private final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     @Override
+    @Transactional
     public ResponseBookDto addNewBook(BookDto bookDto) {
         Optional<Book> book = bookRepository.findByName(bookDto.getName());
         if(book.isPresent()){
@@ -32,6 +36,7 @@ public class BookServiceImpl implements BookService{
     private ResponseBookDto saveBook(BookDto bookDto){
         Book newBook= modelMapper.map(bookDto, Book.class);
         bookRepository.save(newBook);
+        logger.info("New Book is added. BookName: " + bookDto.getName());
         return modelMapper.map(newBook, ResponseBookDto.class);
     }
 
@@ -43,12 +48,19 @@ public class BookServiceImpl implements BookService{
             throw new ReadingIsGoodException(id, ExceptionCode.STOCK_MUST_BE_GREATER_THAN_ZERO);
         book.setStock(bookDto.getStock());
         bookRepository.save(book);
+        logger.info("Book's Stock is updated. BookName: " + bookDto.getName()+ " booksNewStock: " + bookDto.getStock());
         return modelMapper.map(book, ResponseBookDto.class);
     }
 
     @Override
     public ResponseBookDto getBookInfoByName(String name) {
         Book book = bookRepository.findByName(name).orElseThrow(() ->new ReadingIsGoodException(name, ExceptionCode.BOOK_NOT_FOUND));
+        return modelMapper.map(book, ResponseBookDto.class);
+    }
+
+    @Override
+    public ResponseBookDto getBookInfoById(String id) {
+        Book book = bookRepository.findById(id).orElseThrow(() ->new ReadingIsGoodException(id, ExceptionCode.BOOK_NOT_FOUND));
         return modelMapper.map(book, ResponseBookDto.class);
     }
 }

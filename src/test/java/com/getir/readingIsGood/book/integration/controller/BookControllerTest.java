@@ -1,4 +1,4 @@
-package com.getir.readingIsGood.book.Integration.controller;
+package com.getir.readingIsGood.book.integration.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.getir.readingIsGood.book.controller.BookController;
@@ -6,7 +6,6 @@ import com.getir.readingIsGood.book.dto.BookDto;
 import com.getir.readingIsGood.book.dto.ResponseBookDto;
 import com.getir.readingIsGood.book.model.Book;
 import com.getir.readingIsGood.book.service.BookService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,9 +43,9 @@ class BookControllerTest {
     ResponseBookDto responseBookDto;
     @BeforeEach
     void setUp() {
-        book = new Book("622d8c5ed123ff3726a90b18","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
+        book = new Book("id","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
         bookdto = new BookDto("Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
-        responseBookDto = new ResponseBookDto("622d8c5ed123ff3726a90b18","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
+        responseBookDto = new ResponseBookDto("id","Yeraltindan Notlar", "Dostoyevski", 3, BigDecimal.valueOf(10.0),"description");
     }
 
     @MockBean
