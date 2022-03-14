@@ -1,5 +1,14 @@
 version: "3.8"
 services:
+  readingisgood:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb
+    networks:
+      - getir-network
   mongodb:
     image: mongo
     container_name: mongodb
