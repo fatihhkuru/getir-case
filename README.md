@@ -15,6 +15,9 @@ $ docker-compose up -d
 ## Technologies
 - OpenJdk 11
 - MongoDb
+- Spring boot 2
+- Spring Security
+- Docker
 
 ## Test
 - address : http://localhost:8080/
